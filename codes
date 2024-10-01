@@ -1,0 +1,224 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity, TextInput } from 'react-native';
+
+const App: React.FC = () => {
+  const [currentScreen, setCurrentScreen] = useState('Start');
+  const [dishes, setDishes] = useState<string[]>(['Pizza', 'Pasta', 'Burger']);
+  const [selectedDish, setSelectedDish] = useState<string | null>(null);
+  const [dishDetails, setDishDetails] = useState({ name: '', description: '', course: '', price: '' });
+
+  const handleDishSelect = (dish: string) => {
+    setSelectedDish(dish);
+    setDishDetails({ name: dish, description: '', course: '', price: '' }); // Placeholder details
+    setCurrentScreen('Third');
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'Start':
+        return (
+          <ImageBackground
+            source={require('./assets/background.png')}
+            style={styles.backgroundImage}
+          >
+            <Image source={require('./assets/front_homepage_')} style={styles.frontImage} />
+            <Image source={require('./assets/Menupage_png')} style={styles.logoImage} />
+            <Text style={styles.restaurantName}>Critoffel Restaurant</Text>
+            <Text style={styles.tagline}>Est. 2024 - Fresh Ingredients, Delicious Meals</Text>
+            <TouchableOpacity style={styles.startButton} onPress={() => setCurrentScreen('Second')}>
+              <Text style={styles.startButtonText}>Explore Menu</Text>
+            </TouchableOpacity>
+          </ImageBackground>
+        );
+      case 'Second':
+        return (
+          <View style={styles.container}>
+            <Text style={styles.heading}>Chef's Dish List</Text>
+            {dishes.map((dish) => (
+              <TouchableOpacity key={dish} onPress={() => handleDishSelect(dish)}>
+                <Text style={styles.dishItem}>{dish}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity onPress={() => setCurrentScreen('Filter')}>
+              <Text style={styles.filterButton}>Filter Dishes by Course</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCurrentScreen('Start')}>
+              <Text style={styles.backButton}>Back to Home</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      case 'Third':
+        return (
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.topButton} onPress={() => setCurrentScreen('Second')}>
+              <Text>Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.topButton} onPress={() => setCurrentScreen('Second')}>
+              <Text>Back</Text>
+            </TouchableOpacity>
+            <View style={styles.dishEditContainer}>
+              <TextInput
+                placeholder="Dish Name"
+                value={dishDetails.name}
+                onChangeText={(text) => setDishDetails({ ...dishDetails, name: text })}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Description"
+                value={dishDetails.description}
+                onChangeText={(text) => setDishDetails({ ...dishDetails, description: text })}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Available Courses"
+                value={dishDetails.course}
+                onChangeText={(text) => setDishDetails({ ...dishDetails, course: text })}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Price"
+                value={dishDetails.price}
+                onChangeText={(text) => setDishDetails({ ...dishDetails, price: text })}
+                style={styles.input}
+              />
+            </View>
+            <TouchableOpacity style={styles.editButton} onPress={() => setCurrentScreen('Fourth')}>
+              <Text style={styles.buttonText}>Edit</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      case 'Filter':
+        return (
+          <View style={styles.container}>
+            <Text>Select Course</Text>
+            <TouchableOpacity>
+              <Text>Starters</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text>Main Course</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text>Dessert</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.nextButton} onPress={() => setCurrentScreen('Second')}>
+              <Text style={styles.buttonText}>Apply Filter</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      case 'Fourth':
+        return (
+          <View style={styles.container}>
+            <Image source={require('./assets/goodbye.png')} style={styles.goodbyeImage} />
+            <TouchableOpacity onPress={() => setCurrentScreen('Start')}>
+              <Text style={styles.doneButton}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      default:
+        return <Text>Unknown Screen</Text>;
+    }
+  };
+
+  return <View style={styles.appContainer}>{renderScreen()}</View>;
+};
+
+const styles = StyleSheet.create({
+  appContainer: {
+    flex: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  frontImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    position: 'absolute',
+    top: 0,
+  },
+  logoImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginTop: 220,
+  },
+  restaurantName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  tagline: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    marginVertical: 10,
+  },
+  startButton: {
+    backgroundColor: '#FF0000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+    marginTop: 30,
+  },
+  startButtonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  heading: {
+    fontSize: 22,
+    marginBottom: 20,
+  },
+  dishItem: {
+    fontSize: 20,
+    padding: 10,
+    color: 'blue',
+  },
+  filterButton: {
+    marginTop: 20,
+    color: 'green',
+  },
+  backButton: {
+    marginTop: 20,
+    color: 'red',
+  },
+  nextButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
+    padding: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    width: 200,
+    marginBottom: 20,
+    paddingLeft: 8,
+  },
+  editButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonText: {
+    color: 'white',
+  },
+  doneButton: {
+    fontSize: 20,
+    color: 'green',
+  },
+  goodbyeImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
+});
+
+export default App;
